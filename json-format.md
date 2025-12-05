@@ -37,3 +37,6 @@
     ]
   }
 }
+"includePath": [
+    "${workspaceFolder}/**"
+]
