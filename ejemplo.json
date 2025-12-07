@@ -1,0 +1,30 @@
+{
+    "id": 1,
+    "name": "root",
+    "type": "folder",
+    "content": null,
+    "children": [
+        {
+            "id": 2,
+            "name": "documentos",
+            "type": "folder",
+            "content": null,
+            "children": [
+                {
+                    "id": 3,
+                    "name": "tarea.txt",
+                    "type": "file",
+                    "content": "Hola mundo",
+                    "children": []
+                }
+            ]
+        },
+        {
+            "id": 4,
+            "name": "fotos",
+            "type": "folder",
+            "content": null,
+            "children": []
+        }
+    ]
+}
