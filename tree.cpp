@@ -98,7 +98,7 @@ static json nodeToJson(const shared_ptr<Node>& n) {
 
 Tree::Tree() : root(nullptr) {}
 
-// --- TAREA DÍA 4 (EDUARDO): CARGAR ---
+// ---  DÍA 4 (EDUARDO): CARGAR ---
 bool Tree::load_from_file(const string& filename) {
     ifstream file(filename);
     if (!file.is_open()) {
@@ -117,7 +117,7 @@ bool Tree::load_from_file(const string& filename) {
     }
 }
 
-// --- TAREA DÍA 4 (GEOVANNY): GUARDAR ---
+// ---  DÍA 4 (GEOVANNY): GUARDAR ---
 bool Tree::save_to_file(const string& filename) const {
     if (!root) return false;
     json j = nodeToJson(root);
@@ -127,7 +127,7 @@ bool Tree::save_to_file(const string& filename) const {
     return true;
 }
 
-// --- TAREA DÍA 3 (EDUARDO): MOVER ---
+// --- DÍA 3 (EDUARDO): MOVER ---
 void Tree::moveNode(const string& idNode, const string& idDestParent) {
     if (!root) return;
 
@@ -160,9 +160,27 @@ void Tree::moveNode(const string& idNode, const string& idDestParent) {
     cout << "Movido exitosamente.\n";
 }
 
-// --- TAREA DÍA 5 (EDUARDO): CARGAR AL TRIE ---
+// --- DÍA 5 (EDUARDO): CARGAR AL TRIE ---
 void Tree::loadNamesIntoTrie(Trie& trieObject) {
     if (!root) return;
     populateTrieRecursive(root, trieObject);
     cout << "Nombres cargados al Trie.\n";
+}
+
+// --- DÍA 6 -
+void Tree::autocompleteConsole(Trie& trieObject, const string& prefix) {
+    // 1. Llamar a la lógica 
+    vector<string> suggestions = trieObject.getWordsStartingWith(prefix);
+
+    // 2. Mostrar la parte visual 
+    cout << "\n>>> Autocompletado para: '" << prefix << "' <<<" << endl;
+    
+    if (suggestions.empty()) {
+        cout << "   (No se encontraron coincidencias)" << endl;
+    } else {
+        for (const string& word : suggestions) {
+            cout << "   -> " << word << endl;
+        }
+    }
+    cout << "---------------------------------------" << endl;
 }

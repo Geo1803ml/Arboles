@@ -5,13 +5,12 @@
 #include <memory>   // Para std::shared_ptr, std::weak_ptr
 #include <optional> // Para std::optional
 
-// Necesitamos saber que existe la clase Trie para la función del Día 5
-// (Asegúrate de tener el archivo Trie.hpp creado, aunque sea básico)
+
 #include "Trie.hpp"
 
-// ==========================================
+
 // 1. ESTRUCTURA DEL NODO (Día 1 y 2)
-// ==========================================
+
 
 enum class NodeType { FOLDER, FILE };
 
@@ -30,9 +29,9 @@ struct Node {
         : id(_id), name(_name), type(_type), content(std::nullopt) {}
 };
 
-// ==========================================
-// 2. CLASE ÁRBOL (Día 2, 3, 4, 5)
-// ==========================================
+
+// 2. CLASE ÁRBOL 
+
 
 class Tree {
 private:
@@ -53,16 +52,22 @@ public:
     // Constructor
     Tree();
 
-    // --- TAREA DÍA 4: Cargar y Guardar ---
-    bool load_from_file(const std::string& filename);      // Tu tarea (Eduardo)
-    bool save_to_file(const std::string& filename) const;  // Tarea de Geovanny
+    // ---  DÍA 4: Cargar y Guardar ---
+    bool load_from_file(const std::string& filename);      
+    bool save_to_file(const std::string& filename) const;  
 
-    // --- TAREA DÍA 3: Mover nodos ---
+    // ---  DÍA 3: Mover nodos ---
     void moveNode(const std::string& idNode, const std::string& idDestParent);
 
-    // --- TAREA DÍA 5: Conectar con Trie ---
+    // ---DÍA 5: Conectar con Trie ---
     void loadNamesIntoTrie(Trie& trieObject);
     
     // Getter para pruebas (opcional)
     std::shared_ptr<Node> getRoot() { return root; }
+    // ... dentro de class Tree ... public:
+
+    // DÍA 6 
+    void autocompleteConsole(Trie& trieObject, const std::string& prefix);
+
+
 };
