@@ -349,3 +349,10 @@ void ArbolGeneral::move_by_name(const string& nameToMove, const string& nameDest
     // (Reutilizamos tu función moveNode que ya valida ciclos y todo eso)
     moveNode(nodeToMove->id, destFolder->id);
 }
+
+// --- DÍA 9 COMANDO SEARCH ---
+void ArbolGeneral::search(const string& prefix, Trie& trie) {
+    cout << "Ejecutando busqueda global..." << endl;
+    // Reutilizamos tu función visual del Día 6
+    autocompleteConsole(trie, prefix);
+}

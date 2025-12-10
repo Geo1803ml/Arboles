@@ -21,17 +21,18 @@ int main() {
         cout << "[Exito] Datos cargados y Trie indexado.\n";
     }
 
-    // --- NUEVO DIA 8: ACTUALIZAMOS EL MENÚ VISUAL ---
+    // --- MENÚ PRINCIPAL ---
     cout << "\n============================================\n";
-    cout << "      CONSOLA DE ARBOLES (Dia 8)           \n";
+    cout << "      CONSOLA DE ARBOLES (Hasta Dia 9)     \n";
     cout << "============================================\n";
     cout << "Comandos disponibles:\n";
     cout << "  ls                  -> Listar contenido\n";
     cout << "  mkdir <nombre>      -> Crear carpeta\n";
     cout << "  touch <nombre>      -> Crear archivo\n";
     cout << "  cd <nombre>         -> Entrar a carpeta\n";
-    cout << "  mv <origen> <dest>  -> Mover archivo/carpeta\n"; // Nuevo
-    cout << "  rename <old> <new>  -> Renombrar\n";             // Nuevo
+    cout << "  mv <origen> <dest>  -> Mover archivo/carpeta\n"; // Día 8
+    cout << "  rename <old> <new>  -> Renombrar\n";             // Día 8
+    cout << "  search <texto>      -> Buscar archivo (Trie)\n"; // Día 9 
     cout << "  exit                -> Salir\n";
     cout << "============================================\n";
 
@@ -66,35 +67,43 @@ int main() {
             if (arg.empty()) cout << "Uso: cd <carpeta>\n";
             else sistema.cd(arg);
         }
-        // -DIA 8: IMPLEMENTACIÓN DE RENAME ---
+        // --- DÍA 8: RENAME ---
         else if (command == "rename") {
             string newName;
-            ss >> newName; // Leemos la TERCERA palabra (el segundo argumento)
-            
+            ss >> newName; // Leemos el segundo argumento
             if (arg.empty() || newName.empty()) {
                 cout << "Uso: rename <nombre_actual> <nombre_nuevo>\n";
             } else {
                 sistema.rename(arg, newName, autocompletado);
             }
         }
-        // DIA 8: IMPLEMENTACIÓN DE MV ---
+        // --- DÍA 8: MOVE ---
         else if (command == "mv") {
             string dest;
-            ss >> dest; // Leemos la TERCERA palabra (el destino)
-            
+            ss >> dest; // Leemos el segundo argumento
             if (arg.empty() || dest.empty()) {
                 cout << "Uso: mv <archivo_a_mover> <carpeta_destino>\n";
             } else {
                 sistema.move_by_name(arg, dest);
             }
         }
-        // ---------------------------------------------
+        // --- DÍA 9: SEARCH
+        else if (command == "search") {
+            if (arg.empty()) {
+                cout << "Uso: search <nombre_o_prefijo>\n";
+            } else {
+                sistema.search(arg, autocompletado);
+            }
+        }
+        // --------------------------------
         else if (command == "help") {
-            cout << "Ayuda: ls, mkdir, touch, cd, mv, rename, exit\n";
+            cout << "Ayuda: ls, mkdir, touch, cd, mv, rename, search, exit\n";
         }
         else {
             cout << "Comando no reconocido: '" << command << "'\n";
-            sistema.autocompleteConsole(autocompletado, command);
+            // Autocompletado inteligente si se equivocan de comando
+            // (Opcional, reutiliza tu lógica de Trie)
+            sistema.autocompleteConsole(autocompletado, command); 
         }
         
         arg = ""; 

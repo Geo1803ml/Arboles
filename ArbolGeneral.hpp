@@ -56,6 +56,10 @@ public:
 
     // Mover un nodo (por nombre) a otro destino (por nombre)
     void move_by_name(const std::string& nameToMove, const std::string& nameDestFolder);
+
+    // DÍA 9 
+    // Comando formal para buscar archivos usando el Trie
+    void search(const std::string& prefix, Trie& trie);
     
     // Getter del nombre actual para el prompt (ej: root/> )
     std::string getCurrentPathName();
