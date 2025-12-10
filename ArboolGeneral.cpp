@@ -271,3 +271,81 @@ void ArbolGeneral::cd(const string& name) {
 string ArbolGeneral::getCurrentPathName() {
     return currentDir ? currentDir->name : "???";
 }
+
+// --- DÍA 8: RENOMBRAR Y MOVER POR NOMBRE ---
+
+void ArbolGeneral::rename(const string& oldName, const string& newName, Trie& trie) {
+    if (!currentDir) return;
+
+    // 1. Verificar que el nombre nuevo no exista ya (para no duplicar)
+    for (const auto& child : currentDir->children) {
+        if (child->name == newName) {
+            cout << "Error: Ya existe un archivo con el nombre '" << newName << "'.\n";
+            return;
+        }
+    }
+
+    // 2. Buscar el nodo a renombrar
+    for (auto& child : currentDir->children) {
+        if (child->name == oldName) {
+            // Cambiar nombre
+            child->name = newName;
+            
+            // Actualizar Trie (Insertamos el nuevo. Borrar el viejo es complejo, 
+            // por ahora solo agregamos el nuevo para que el autocompletado funcione).
+            trie.insert(newName);
+
+            cout << "Renombrado con exito: " << oldName << " -> " << newName << endl;
+            return;
+        }
+    }
+
+    cout << "Error: No se encontro '" << oldName << "'.\n";
+}
+
+void ArbolGeneral::move_by_name(const string& nameToMove, const string& nameDestFolder) {
+    if (!currentDir) return;
+
+    // A. Buscar el nodo que queremos mover (dentro de la carpeta actual)
+    shared_ptr<Node> nodeToMove = nullptr;
+    for (const auto& child : currentDir->children) {
+        if (child->name == nameToMove) {
+            nodeToMove = child;
+            break;
+        }
+    }
+
+    if (!nodeToMove) {
+        cout << "Error: No se encontro '" << nameToMove << "' para mover.\n";
+        return;
+    }
+
+    // B. Buscar el destino
+    // Caso especial: ".." significa ir al padre del actual
+    shared_ptr<Node> destFolder = nullptr;
+
+    if (nameDestFolder == "..") {
+        destFolder = currentDir->parent.lock(); // Obtener padre
+        if (!destFolder) {
+            cout << "Error: Ya estas en la raiz, no puedes mover a ..\n"; 
+            return;
+        }
+    } else {
+        // Buscar carpeta destino dentro de los hijos actuales
+        for (const auto& child : currentDir->children) {
+            if (child->name == nameDestFolder) {
+                destFolder = child;
+                break;
+            }
+        }
+    }
+
+    if (!destFolder) {
+        cout << "Error: No se encontro el destino '" << nameDestFolder << "'.\n";
+        return;
+    }
+
+    // C. Llamar a la lógica "pesada" del Día 3 usando los IDs encontrados
+    // (Reutilizamos tu función moveNode que ya valida ciclos y todo eso)
+    moveNode(nodeToMove->id, destFolder->id);
+}

@@ -48,6 +48,14 @@ public:
     void mkdir(const std::string& name, Trie& trie); // Crear carpeta
     void touch(const std::string& name, Trie& trie); //  Crear archivo
     void cd(const std::string& name); // Entrar a carpeta
+
+    //  DÍA 8
+    
+    // Cambiar nombre a un archivo/carpeta del directorio actual
+    void rename(const std::string& oldName, const std::string& newName, Trie& trie);
+
+    // Mover un nodo (por nombre) a otro destino (por nombre)
+    void move_by_name(const std::string& nameToMove, const std::string& nameDestFolder);
     
     // Getter del nombre actual para el prompt (ej: root/> )
     std::string getCurrentPathName();

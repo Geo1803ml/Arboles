@@ -13,75 +13,94 @@ int main() {
 
     cout << "Cargando sistema de archivos..." << endl;
 
-    // 2. Cargar datos desde el JSON (Persistencia)
-    // Asegúrate de tener 'ejemplo.json' o el programa iniciará vacío.
+    // 2. Cargar datos desde el JSON
     if (!sistema.load_from_file("ejemplo.json")) {
-        cout << "[Aviso] No se encontro 'ejemplo.json' o hubo error al leer. Iniciando vacio.\n";
+        cout << "[Aviso] No se encontro 'ejemplo.json'. Iniciando vacio.\n";
     } else {
-        // Si cargó bien, llenamos el Trie para el autocompletado
         sistema.loadNamesIntoTrie(autocompletado);
         cout << "[Exito] Datos cargados y Trie indexado.\n";
     }
 
+    // --- NUEVO DIA 8: ACTUALIZAMOS EL MENÚ VISUAL ---
     cout << "\n============================================\n";
-    cout << "      CONSOLA DE ARBOLES (Dia 7)           \n";
+    cout << "      CONSOLA DE ARBOLES (Dia 8)           \n";
     cout << "============================================\n";
     cout << "Comandos disponibles:\n";
     cout << "  ls                  -> Listar contenido\n";
     cout << "  mkdir <nombre>      -> Crear carpeta\n";
     cout << "  touch <nombre>      -> Crear archivo\n";
-    cout << "  cd <nombre>         -> Entrar a carpeta (.. para regresar)\n";
+    cout << "  cd <nombre>         -> Entrar a carpeta\n";
+    cout << "  mv <origen> <dest>  -> Mover archivo/carpeta\n"; // Nuevo
+    cout << "  rename <old> <new>  -> Renombrar\n";             // Nuevo
     cout << "  exit                -> Salir\n";
     cout << "============================================\n";
 
     string input, command, arg;
 
-    // 3. Bucle Principal (La Consola Interactiva)
+    // 3. Bucle Principal
     while (true) {
-        // Mostrar ruta actual como prompt (ej: root/> )
         cout << "\n" << sistema.getCurrentPathName() << "/> ";
         
-        // Leer toda la línea que escribe el usuario
         getline(cin, input);
         if (input.empty()) continue;
 
-        // Separar comando y argumento (ej: "mkdir tarea" -> cmd="mkdir", arg="tarea")
         stringstream ss(input);
-        ss >> command >> arg; 
+        ss >> command >> arg; // Lee comando y primer argumento
 
         // --- Procesar Comandos ---
         if (command == "exit") {
-            break; // Rompe el bucle y termina
+            break;
         }
         else if (command == "ls") {
             sistema.ls();
         }
         else if (command == "mkdir") {
-            if (arg.empty()) cout << "Error: Falta el nombre. Uso: mkdir <nombre>\n";
+            if (arg.empty()) cout << "Uso: mkdir <nombre>\n";
             else sistema.mkdir(arg, autocompletado);
         }
         else if (command == "touch") {
-            if (arg.empty()) cout << "Error: Falta el nombre. Uso: touch <nombre>\n";
+            if (arg.empty()) cout << "Uso: touch <nombre>\n";
             else sistema.touch(arg, autocompletado);
         }
         else if (command == "cd") {
-            if (arg.empty()) cout << "Error: Falta el destino. Uso: cd <carpeta>\n";
+            if (arg.empty()) cout << "Uso: cd <carpeta>\n";
             else sistema.cd(arg);
         }
+        // -DIA 8: IMPLEMENTACIÓN DE RENAME ---
+        else if (command == "rename") {
+            string newName;
+            ss >> newName; // Leemos la TERCERA palabra (el segundo argumento)
+            
+            if (arg.empty() || newName.empty()) {
+                cout << "Uso: rename <nombre_actual> <nombre_nuevo>\n";
+            } else {
+                sistema.rename(arg, newName, autocompletado);
+            }
+        }
+        // DIA 8: IMPLEMENTACIÓN DE MV ---
+        else if (command == "mv") {
+            string dest;
+            ss >> dest; // Leemos la TERCERA palabra (el destino)
+            
+            if (arg.empty() || dest.empty()) {
+                cout << "Uso: mv <archivo_a_mover> <carpeta_destino>\n";
+            } else {
+                sistema.move_by_name(arg, dest);
+            }
+        }
+        // ---------------------------------------------
         else if (command == "help") {
-            cout << "Ayuda: ls, mkdir, touch, cd, exit\n";
+            cout << "Ayuda: ls, mkdir, touch, cd, mv, rename, exit\n";
         }
         else {
             cout << "Comando no reconocido: '" << command << "'\n";
-            // Aquí conectarás el autocompletado visual en el futuro
             sistema.autocompleteConsole(autocompletado, command);
         }
         
-        // Limpiar argumento para la siguiente vuelta
         arg = ""; 
     }
 
-    // 4. Guardado Automático al Salir (Opcional pero recomendado)
+    // 4. Guardar al Salir
     cout << "Guardando cambios en 'ejemplo.json'...\n";
     if (sistema.save_to_file("ejemplo.json")) {
         cout << "Guardado exitoso.\n";
