@@ -5,6 +5,7 @@
 #include <fstream>
 #include <algorithm>
 #include <iomanip> // Para que el 'ls' se vea ordenado
+#include <chrono> // medir el tiempo
 
 using json = nlohmann::json;
 using namespace std;
@@ -355,4 +356,50 @@ void ArbolGeneral::search(const string& prefix, Trie& trie) {
     cout << "Ejecutando busqueda global..." << endl;
     // Reutilizamos tu función visual del Día 6
     autocompleteConsole(trie, prefix);
+}
+
+// DÍA 10  RENDIMIENTO
+
+
+void ArbolGeneral::runPerformanceTest(Trie& trie) {
+    if (!currentDir) return;
+
+    cout << "\n[INICIO TEST] Generando 500 archivos automaticos...\n";
+
+    // 1. Iniciar Cronómetro para la INSERCIÓN
+    auto startInsert = std::chrono::high_resolution_clock::now();
+
+    for (int i = 0; i < 500; i++) {
+        string name = "archivo_test_" + to_string(i) + ".log";
+        
+        // Lógica simplificada de touch para no llenar la consola de texto
+        string newId = currentDir->id + "_" + name;
+        auto newNode = make_shared<Node>(newId, name, NodeType::FILE);
+        newNode->parent = currentDir;
+        newNode->content = "Contenido de prueba generado automaticamente.";
+        
+        currentDir->children.push_back(newNode);
+        trie.insert(name);
+    }
+
+    auto endInsert = std::chrono::high_resolution_clock::now();
+    // Calcular duración en milisegundos
+    auto durationInsert = std::chrono::duration_cast<std::chrono::milliseconds>(endInsert - startInsert);
+
+    cout << "[FIN TEST] 500 archivos creados en memoria.\n";
+    cout << ">> Tiempo de insercion: " << durationInsert.count() << " ms.\n";
+
+    // 2. Iniciar Cronómetro para la BÚSQUEDA (Trie)
+    cout << "\n[TEST] Buscando prefijo 'archivo_test_1' en el Trie...\n";
+    
+    auto startSearch = std::chrono::high_resolution_clock::now();
+    
+    vector<string> results = trie.getWordsStartingWith("archivo_test_1");
+    
+    auto endSearch = std::chrono::high_resolution_clock::now();
+    auto durationSearch = std::chrono::duration_cast<std::chrono::microseconds>(endSearch - startSearch);
+
+    cout << ">> Resultados encontrados: " << results.size() << endl;
+    cout << ">> Tiempo de busqueda (Trie): " << durationSearch.count() << " microsegundos.\n";
+    cout << "---------------------------------------------------\n";
 }

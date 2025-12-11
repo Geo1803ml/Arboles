@@ -60,6 +60,10 @@ public:
     // DÍA 9 
     // Comando formal para buscar archivos usando el Trie
     void search(const std::string& prefix, Trie& trie);
+
+    //DÍA 10PRUEBA DE RENDIMIENTO 
+    // Genera 500 nodos y mide el tiempo de respuesta
+    void runPerformanceTest(Trie& trie);
     
     // Getter del nombre actual para el prompt (ej: root/> )
     std::string getCurrentPathName();
