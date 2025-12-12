@@ -64,6 +64,15 @@ public:
     //DÍA 10PRUEBA DE RENDIMIENTO 
     // Genera 500 nodos y mide el tiempo de respuesta
     void runPerformanceTest(Trie& trie);
+
+    // DÍA 11 VALIDACIÓN Y CONSISTENCIA 
+    
+    // Permite navegar rutas complejas (ej: "documentos/tarea/final")
+    // Retorna el nodo si existe, o nullptr si la ruta es inválida.
+    std::shared_ptr<Node> getNodeFromPath(const std::string& path);
+
+    // Revisa la salud del árbol (verifica que los hijos apunten correctamente a sus padres)
+    void checkIntegrity();
     
     // Getter del nombre actual para el prompt (ej: root/> )
     std::string getCurrentPathName();

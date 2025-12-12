@@ -100,7 +100,12 @@ int main() {
         else if (command == "test") {
             sistema.runPerformanceTest(autocompletado);
         }
-        // ----------------------------------------------
+
+        // DÍA 11: INTEGRIDAD
+        else if (command == "status") {
+            sistema.checkIntegrity();
+        }
+        // --------------------------
         else if (command == "help") {
             cout << "Ayuda: ls, mkdir, touch, cd, mv, rename, search, test, exit\n";
         }

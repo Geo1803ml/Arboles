@@ -242,31 +242,19 @@ void ArbolGeneral::touch(const string& name, Trie& trie) {
     cout << "Archivo creado: " << name << endl;
 }
 
-void ArbolGeneral::cd(const string& name) {
-    if (!currentDir) return;
+void ArbolGeneral::cd(const string& path) {
+    // Día 11: Usa el validador de rutas complejas
+    shared_ptr<Node> target = getNodeFromPath(path);
 
-    // Caso especial: Ir hacia atrás
-    if (name == "..") {
-        if (auto p = currentDir->parent.lock()) {
-            currentDir = p;
+    if (target) {
+        if (target->type == NodeType::FOLDER) {
+            currentDir = target;
         } else {
-            cout << "Ya estas en la raiz.\n";
+            cout << "Error: '" << target->name << "' es un archivo, no una carpeta.\n";
         }
-        return;
+    } else {
+        cout << "Error: Ruta invalida o no encontrada.\n";
     }
-
-    // Buscar carpeta en los hijos
-    for (const auto& child : currentDir->children) {
-        if (child->name == name) {
-            if (child->type == NodeType::FOLDER) {
-                currentDir = child;
-            } else {
-                cout << "Error: '" << name << "' es un archivo, no una carpeta.\n";
-            }
-            return;
-        }
-    }
-    cout << "Error: No se encontro el directorio '" << name << "'.\n";
 }
 
 string ArbolGeneral::getCurrentPathName() {
@@ -402,4 +390,96 @@ void ArbolGeneral::runPerformanceTest(Trie& trie) {
     cout << ">> Resultados encontrados: " << results.size() << endl;
     cout << ">> Tiempo de busqueda (Trie): " << durationSearch.count() << " microsegundos.\n";
     cout << "---------------------------------------------------\n";
+}
+
+
+// DÍA 11  BUGFIXES & VALIDATION
+
+
+shared_ptr<Node> ArbolGeneral::getNodeFromPath(const string& path) {
+    if (path.empty()) return currentDir;
+
+    shared_ptr<Node> navigator;
+    
+    // 1. Decidir donde empezar
+    // Si empieza con '/', es ruta absoluta (desde raiz)
+    // Si no, es ruta relativa (desde currentDir)
+    // Nota: Simplificación para este proyecto, asumiremos rutas relativas o nombres directos
+    // a menos que sea "/" explicito.
+    
+    if (path == "/") {
+        return root;
+    }
+    
+    navigator = currentDir;
+    
+    // 2. Partir la ruta por '/' (Tokenizar)
+    string token;
+    stringstream ss(path);
+    
+    // Truco: getline con delimitador '/'
+    while (getline(ss, token, '/')) {
+        if (token.empty()) continue; // Evitar "//"
+        
+        if (token == "..") {
+            // Ir al padre
+            if (auto p = navigator->parent.lock()) {
+                navigator = p;
+            } else {
+                // Ya estamos en raiz, ignorar o error (decidimos ignorar para robustez)
+            }
+        } else if (token == ".") {
+            // "." es el directorio actual, no hacemos nada
+            continue;
+        } else {
+            // Buscar en los hijos
+            bool found = false;
+            for (const auto& child : navigator->children) {
+                if (child->name == token) {
+                    navigator = child;
+                    found = true;
+                    break;
+                }
+            }
+            if (!found) return nullptr; // Ruta rota
+        }
+    }
+    
+    return navigator;
+}
+
+// Función auxiliar recursiva para chequear integridad
+void checkNodeIntegrity(shared_ptr<Node> node, int& errors) {
+    if (!node) return;
+
+    for (const auto& child : node->children) {
+        // Verificar que el hijo sepa quién es su padre
+        auto childParent = child->parent.lock();
+        if (childParent != node) {
+            cout << "[ERROR GRAVE] El nodo '" << child->name << "' tiene el puntero padre roto.\n";
+            errors++;
+        }
+        checkNodeIntegrity(child, errors);
+    }
+}
+
+void ArbolGeneral::checkIntegrity() {
+    if (!root) return;
+    int errors = 0;
+    cout << "Ejecutando diagnostico del sistema de archivos...\n";
+    
+    // Verificar que la raíz no tenga padre
+    if (root->parent.lock() != nullptr) {
+        cout << "[ADVERTENCIA] La raiz cree tener un padre.\n";
+        errors++;
+    }
+
+    // Verificar integridad recursivamente         
+    checkNodeIntegrity(root, errors);
+
+    if (errors == 0) {
+        cout << "[OK] Integridad del arbol verificada. Sistema sano.\n";
+    } else {
+        cout << "[ALERTA] Se encontraron " << errors << " inconsistencias en los punteros.\n";
+    }
 }
