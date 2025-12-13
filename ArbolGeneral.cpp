@@ -10,6 +10,15 @@
 using json = nlohmann::json;
 using namespace std;
 
+/*
+ * PROYECTO: Simulador de Sistema de Archivos
+ * ARCHIVO: ArbolGeneral.cpp
+ * AUTORES: Eduardo y Geovanny
+ * DESCRIPCIÓN: Implementación de la lógica del Árbol General.
+ * Incluye gestión de punteros inteligentes (shared_ptr), recursividad
+ * para búsquedas, integración con JSON y validación de rutas.
+ */
+
 // ==========================================
 // 1. FUNCIONES ESTÁTICAS AUXILIARES (JSON)
 // ==========================================

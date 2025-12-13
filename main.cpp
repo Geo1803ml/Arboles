@@ -4,6 +4,15 @@
 #include "ArbolGeneral.hpp"
 #include "Trie.hpp"
 
+/*
+ * PROYECTO: Simulador de Sistema de Archivos
+ * ARCHIVO: main.cpp
+ * AUTORES: Eduardo y Geovanny
+ * FECHA: Diciembre 2025
+ * DESCRIPCIÓN: Módulo principal que maneja el bucle de la consola,
+ * la interpretación de comandos y la orquestación entre el Árbol y el Trie.
+ */
+
 using namespace std;
 
 int main() {
